@@ -5,25 +5,18 @@ const todoControl = document.querySelector('.todo-control'),
       todoList = document.querySelector('.todo-list'),
       todoCompleted = document.querySelector('.todo-completed');
 
-const todoData = [
-  {
-    value: 'Сварить кофе',
-    completed: false
-  },
-  {
-    value: 'Помыть посуду',
-    completed: true
-  }
-];
+let todoData = [];
 
-const render = function(){
+const render = function(){ 
+  todoData = JSON.parse(localStorage.getItem("todoData"));
+  
   todoList.textContent = '';
-  todoCompleted.textContent = '';
-
+  todoCompleted.textContent = '';  
+    
   todoData.forEach(function(item){
     const li = document.createElement('li');
     li.classList.add('todo-item');
-
+    
     li.innerHTML = '<span class="text-todo">' + item.value + '</span>' +
           '<div class="todo-buttons">' +
             '<button class="todo-remove"></button>'+
@@ -35,34 +28,43 @@ const render = function(){
       todoList.append(li);
     };
 
-    const btnTodoCompleted = li.querySelector('.todo-complete');
+    const btnTodoCompleted = li.querySelector('.todo-complete');    
       btnTodoCompleted.addEventListener('click', function() {
         item.completed = !item.completed;
-        render();
+        localStorage.setItem("todoData", JSON.stringify(todoData)); 
+        render();         
       });
       
       const btnTodoRemove = li.querySelector('.todo-remove');
-      btnTodoRemove.addEventListener('click', function() {                  
-        li.remove();       
+      btnTodoRemove.addEventListener('click', function() {                      
+        li.remove();               
+        todoData.splice(item, 1);
+        localStorage.setItem("todoData", JSON.stringify(todoData));      
       });
   }); 
+
 };
 
-todoControl.addEventListener('submit' || 'click', function(event) {
+todoControl.addEventListener('submit' || 'click', function(event) {  
   event.preventDefault();
-  if (headerInput.value !=='' && headerInput.value.trim()) {    
+
   const newTodo = {
     value: headerInput.value,
     completed: false    
   };
 
-  if (todoData.push(newTodo)){    
-    headerInput.value = '';    
+  
+  if (headerInput.value !=='') {    
+    headerInput.value.trim();
+    todoData.push(newTodo);    
+    localStorage.setItem("todoData", JSON.stringify(todoData));
+    if (todoData.push(newTodo)){    
+      headerInput.value = '';    
+    }
   }
 
   render();
-  };
+ 
 });
 
 render();
-
